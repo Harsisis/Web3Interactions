@@ -1,0 +1,17 @@
+@font-face {
+    font-family: maskedFont;
+    src: url('password.ttf');
+}
+
+.maskableItem {
+    outline: 2px solid red;
+    cursor: pointer;
+}
+
+.masked {
+    font-family: maskedFont;
+    font-weight: lighter;
+    font-style: normal;
+    letter-spacing: -4px;
+    padding-right: 5px;
+}
