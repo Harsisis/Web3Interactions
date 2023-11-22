@@ -1,18 +1,39 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <!-- Web3 -->
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <!-- D3 -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
 
     <script>
-      var web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/b436826636aa4b86b68b40a2092b8b4c'));
 
-      // ABI endpoint provided by Etherscan
-      var etherscanAbiEndpoint = `https://api.etherscan.io/api?module=contract&action=getabi&address=${SMART CONTRACT ADDRESS}&apikey=${ETHERSCAN API KEY}`
+      const BLOCK_ADDRESS = "0x861E3c82Bc2753ea64aE5f962d993DF6853a6700";
+      const API_KEY = "M8HTRA82T8PPRHT5MEUEITEQJ27CJ6GHX5";
+      const ETH_WALLET_ADDRESS = "0x8eF9C1645B17E5006B24d63F849b50B9DFff1A2c";
+
+      document.addEventListener("DOMContentLoaded", async function(event) { 
+        console.log(getTokenBalance(BLOCK_ADDRESS, ETH_WALLET_ADDRESS, API_KEY))
+      });
+
       
-      // Call the endpoint with the D3 library
-      var abi = await d3.json(etherscanAbiEndpoint)
+      async function getTokenBalance(smartContractAddress, ethWalletAddress, etherscanAPIKey) {
+          let web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/b436826636aa4b86b68b40a2092b8b4c'));
+          // ABI endpoint provided by Etherscan
+          let etherscanAbiEndpoint = `https://api.etherscan.io/api?module=contract&action=getabi&address=${smartContractAddress}&apikey=${etherscanAPIKey}`
+          // Call the endpoint
+          let abi = await d3.json(etherscanAbiEndpoint);
+          // Create Web3 contract object
+          let contract = new web3.eth.Contract(JSON.parse(abi.result), smartContractAddress);
+          // Get balance of ERC20 token on Ethereum wallet
+          console.log(contract.methods);
+
+          let balance = await contract.methods.balanceOf(ethWalletAddress).call();
+          // Get number of decimals used for ERC20 token
+          let decimals = await contract.methods.decimals().call();
+          // Return human friendly token balance to user
+          return decimals_to_units(balance, decimals);
+      }
     </script>
 </head>
 <body>
@@ -40,8 +61,8 @@
               <p class="text-muted mb-1">Full Stack Developer</p>
               <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
               <div class="d-flex justify-content-center mb-2">
-                <button type="button" class="btn btn-primary">Follow</button>
-                <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+                <button type="button" class="btn btn-primary m-2">Follow</button>
+                <button type="button" class="btn btn-outline-primary m-2 ms-1">Message</button>
               </div>
             </div>
           </div>
