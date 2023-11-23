@@ -43,12 +43,12 @@ const CONTRACT_SOPH_ADDRESS = "0xC1932768A7453c493861E7D5551164878DEcE3d2";
 const CONTRACT_FR_ADDRESS = "0xD8f3c097471B621378D3729e1cC4961aC36A3356";
 const CONTRACT_BALD_ADDRESS = "0x622bA4BA3b03C653aFD77ee1d605061C8d69817c";
 
-const contractMT = new web3Client.eth.Contract(minABI, CONTRACT_MT_ADDRESS);
-const contractSOPH = new web3Client.eth.Contract(minABI, CONTRACT_SOPH_ADDRESS);
-const contractFR = new web3Client.eth.Contract(minABI, CONTRACT_FR_ADDRESS);
-const contractBALD = new web3Client.eth.Contract(minABI, CONTRACT_BALD_ADDRESS);
-
-const contractList = [contractMT, contractSOPH, contractFR, contractBALD];
+const contractList = [
+  CONTRACT_MT_ADDRESS,
+  CONTRACT_SOPH_ADDRESS,
+  CONTRACT_FR_ADDRESS,
+  CONTRACT_BALD_ADDRESS,
+];
 
 const MMSDK = new MetaMaskSDK.MetaMaskSDK();
 
@@ -69,11 +69,12 @@ const getAccount = async () => {
       }
     });
   const account = accounts[0];
-  console.log(account);
   return account;
 };
 
-const getBalance = async (contract, wallet) => {
+const getBalance = async (contractKey, wallet) => {
+  const contract = new web3Client.eth.Contract(minABI, contractKey);
+
   const result = await contract.methods.balanceOf(wallet).call();
   const name = await contract.methods.name().call();
   const symbol = await contract.methods.symbol().call();
@@ -81,7 +82,7 @@ const getBalance = async (contract, wallet) => {
 
   const amount = decimalsToUnits(result, decimals);
 
-  console.log(`Balance in ${name}: ${amount} ${symbol}`);
+  addToTokenList(`Balance in ${name}: ${amount} ${symbol}`);
 };
 
 const decimalsToUnits = (tokenUnits, decimals) => {
@@ -91,6 +92,21 @@ const decimalsToUnits = (tokenUnits, decimals) => {
     "." +
     tokenUnits.toString().slice(-decimalsInt);
   return parseFloat(tokenUnit);
+};
+
+const addToTokenList = (str) => {
+  const liElement = document.createElement("li");
+  liElement.classList.add([
+    "list-group-item",
+    "d-flex",
+    "justify-content-between",
+    "align-items-center",
+    "align-items-center",
+    "p-3",
+  ]);
+  liElement.innerHTML = str;
+
+  document.getElementById("token_list").append(liElement);
 };
 
 const retrieveTokenForLoggedUser = async () => {
