@@ -3,6 +3,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk.js"></script>
     <script>
 
       const endpointUrl = "https://frosty-holy-forest.matic-testnet.quiknode.pro/b4faa107e42ea7b0500ad05192d8022970e298f0/"
@@ -39,6 +41,35 @@
       getBalance();
 
       
+
+
+
+
+
+      const MMSDK = new MetaMaskSDK.MetaMaskSDK()
+      // Because init process of the MetaMaskSDK is async.
+      setTimeout(() => {
+          const ethereum = MMSDK.getProvider() // You can also access via window.ethereum
+
+          ethereum.request({ method: 'eth_requestAccounts' })
+      }, 0)
+
+      async function getAccount() {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+          .catch((err) => {
+            if (err.code === 4001) {
+              // EIP-1193 userRejectedRequest error
+              // If this happens, the user rejected the connection request.
+              console.log('Please connect to MetaMask.');
+            } else {
+              console.error(err);
+            }
+          });
+        const account = accounts[0];
+        console.log(account);
+      }
+      getAccount();
+
     </script>
 </head>
 <body>
