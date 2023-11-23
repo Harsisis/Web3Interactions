@@ -23,19 +23,40 @@
           outputs: [{ name: "balance", type: "uint256"}],
           type: "function",
         },
+        // name
+        {
+          constant: true,
+          inputs: [],
+          name: "name",
+          outputs: [{ name: "", type: "string" }],
+          type: "function",
+        },
+        // symbol
+        {
+          constant: true,
+          inputs: [],
+          name: "symbol",
+          outputs: [{ name: "", type: "string" }],
+          type: "function",
+        },
+        // decimals
+        {
+          constant: true,
+          inputs: [],
+          name: "decimals",
+          outputs: [{ name: "", type: "uint8" }],
+          type: "function",
+        },
       ];
 
       const contract = new web3Client.eth.Contract(minABI, CONTRACT_ADDRESS);
 
       async function getBalance() {
         const result = await contract.methods.balanceOf(ETH_WALLET_ADDRESS).call();
+        const name = await  contract.methods.name().call();
+        const symbol = await  contract.methods.symbol().call();
 
-        console.log(result);
-
-        const resultInEther = web3Client.utils.fromWei(result, "ether");
-
-        console.log(`Balance in wei: ${result}`);
-        console.log(`Balance in ether: ${resultInEther}`);
+        console.log(`Balance in ${name}: ${result} ${symbol}`);
       }
 
       getBalance();
@@ -67,8 +88,47 @@
           });
         const account = accounts[0];
         console.log(account);
+        return account;
       }
-      getAccount();
+      const connectedWalletAddress = getAccount();
+
+
+
+
+
+
+
+
+
+      const tokenAddress = '0x2E7DA19698F7184f238c6A1bEA52D2e645965396';
+      const tokenSymbol = 'MT';
+      const tokenDecimals = 18;
+
+      async function AddMyToken(){
+        try {
+        // 'wasAdded' is a boolean. Like any RPC method, an error can be thrown.
+        const wasAdded = await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: tokenAddress, // The address of the token.
+              symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 characters.
+              decimals: tokenDecimals, // The number of decimals in the token.
+            },
+          },
+        });
+
+        if (wasAdded) {
+          console.log('Thanks for your interest!');
+        } else {
+          console.log('Your loss!');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    // AddMyToken();
 
     </script>
 </head>
